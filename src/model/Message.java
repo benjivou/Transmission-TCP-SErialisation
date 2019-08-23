@@ -21,4 +21,12 @@ public class Message {
 	public String getContent() {
 		return this.content;
 	}
+
+	@Override
+	public String toString() {
+		return "Message{" +
+				"content='" + content + '\'' +
+				", isLast=" + isLast +
+				'}';
+	}
 }

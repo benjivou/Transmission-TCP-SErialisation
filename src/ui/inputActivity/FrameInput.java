@@ -89,6 +89,8 @@ public class FrameInput extends JFrame implements ActionListener {
 		System.out.println("The message U will send is : " + msgToSend);
 
 		// Store in a file
+
+		// Send it to the cloud
 		new Thread(new TCPClientLMessage(msgToSend)).start();
 		
 	}

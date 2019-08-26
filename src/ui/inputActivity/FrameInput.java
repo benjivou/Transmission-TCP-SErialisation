@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import com.google.gson.*;
+import serialize.FileManager;
 
 
 public class FrameInput extends JFrame implements ActionListener {
@@ -24,8 +25,9 @@ public class FrameInput extends JFrame implements ActionListener {
 	private JPanel mainPanel;
 	private JTextField inputField;
 	private JButton btEnd,btSend;
+	private FileManager fm;
 	
-	public FrameInput() {
+	public FrameInput(FileManager fm) {
 		super();
 		
 		setTitle("Input Frame");
@@ -57,6 +59,8 @@ public class FrameInput extends JFrame implements ActionListener {
 	    
 	    setContentPane(this.mainPanel);
 		setVisible(true);
+
+		this.fm = fm; // get the file and the mutex
 		
 	}
 
@@ -75,20 +79,23 @@ public class FrameInput extends JFrame implements ActionListener {
 			// create the object
 			msg = new Message(this.inputField.getText(),false);
 
+
 		}
 
 		// onClick of btEnd
 		if (strBtName.equals("End")){
 			System.out.println("U press End");
-			msg = new Message("");
+			msg = new Message("kill app");
+
 		}
 
 		// JSONization
 		msgToSend = gson.toJson(msg);
 
-		System.out.println("The message U will send is : " + msgToSend);
+
 
 		// Store in a file
+		fm.add(msg);
 
 		// Send it to the cloud
 		new Thread(new TCPClientLMessage(msgToSend)).start();

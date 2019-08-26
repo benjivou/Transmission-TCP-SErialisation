@@ -11,7 +11,7 @@ public class Message {
 	
 	public Message(String str) {
 		this.content = str;
-		this.isLast = false;
+		this.isLast = true;
 	}
 	
 	public boolean shouldIGo() {

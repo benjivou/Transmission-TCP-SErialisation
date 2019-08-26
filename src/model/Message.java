@@ -22,6 +22,9 @@ public class Message {
 		return this.content;
 	}
 
+	public boolean getIsLast(){
+	    return this.isLast;
+    }
 	@Override
 	public String toString() {
 		return "Message{" +

@@ -3,6 +3,7 @@ package ui.outputActivity;
 import TCP.Client.TCPClientLMessage;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import handlers.handlerSender.HandlerReceiver;
 import model.Message;
 import serialize.FileManager;
 
@@ -11,16 +12,21 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class FrameOutputMessage extends JFrame{
+public class FrameOutputMessage extends JFrame implements Runnable{
 
     // Serializer
     final GsonBuilder builder = new GsonBuilder();
     final Gson gson = builder.create();
 
+
     // Attributs
+    // front attributes
     private JPanel mainPanel;
     private JLabel textArea;
 
+
+    // back attributes
+    private HandlerReceiver handler;
     public FrameOutputMessage() {
         super();
 
@@ -38,18 +44,44 @@ public class FrameOutputMessage extends JFrame{
         this.mainPanel.setLayout(new BorderLayout());
 
         // text field
-        this.textArea = new JLabel("Input anything u want");
+        this.textArea = new JLabel("Input anything U want");
         this.mainPanel.add(this.textArea,BorderLayout.CENTER);
 
 
 
         setContentPane(this.mainPanel);
         setVisible(true);
-
-
+        this.handler = new HandlerReceiver();
 
     }
 
 
+    @Override
+    public void run() {
+        Message msg;
+        boolean on=true;
+        while (on){
+            /**
+             * Step 1: Check if we have some messages
+             */
+             msg = this.handler.getMessage();
 
+            /**
+             * Step 2 : if there is something to do
+             */
+            if (msg != null){
+
+                // final state
+                if (msg.getIsLast()){
+                    this.handler.killHandler(); // kill handler
+                    dispose();       // kill JFrame
+                }else
+                {
+                    this.textArea.setText(msg.getContent());
+                    this.mainPanel.revalidate();
+                    this.mainPanel.repaint();
+                }
+            }
+        }
+    }
 }

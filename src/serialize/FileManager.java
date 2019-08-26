@@ -112,7 +112,7 @@ public class FileManager {
         //opening
         try {
             myFile = new File(this.path);
-            outFile = new FileWriter(myFile);
+            outFile = new FileWriter(myFile,false);
             // gsonizer
             gson.toJson(list, outFile);
             outFile.close();
@@ -136,6 +136,7 @@ public class FileManager {
     {
         while (mutex.get()){}; // wait for Your turn
         this.mutex.set(true);
+
         /*
         Step 1 : Open the file
          */
@@ -143,13 +144,16 @@ public class FileManager {
         ArrayList<Message> list;
         String content="";
         File yourFile = new File(this.path);
+
         /* Step 2: read the number of elements in the file*/
         FileInputStream inFile = null;
         try {
             inFile = new FileInputStream(yourFile);
+
             /*
         Step 2 : Get by char the file content
-         */
+            */
+
             while ((intChar = inFile.read()) != -1) {
 
                 content += (char) intChar;

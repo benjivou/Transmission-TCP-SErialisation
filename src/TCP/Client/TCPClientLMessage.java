@@ -7,13 +7,13 @@ public class TCPClientLMessage extends TCPClientBuilder implements  Runnable{
     private String str;
     public TCPClientLMessage(String str) {
         this.file = str;
-        str = "";
+        this.str = str;
     }
 
     @Override
     public void run() {
         try {
-            recup_file(); // recup file
+
 
 
             setSocket();

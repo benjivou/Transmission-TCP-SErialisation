@@ -51,14 +51,15 @@ public class HandlerReceiver extends Thread implements Runnable{
             // When u receive something
 
             // if the thread is kill
-            if (System.currentTimeMillis()-this.lastCreation > WAIT){
+            if (System.currentTimeMillis()-this.lastCreation > WAIT ||
+                    (this.buffer.peek() != null && this.buffer.peek().getIsLast())){
                 System.out.println(TAG + "U make me wait too long");
                 this.numTry ++;
 
                 // if we try more than 3 times we break the handler
-                if (numTry >TRY) {
+                if (numTry >TRY ||  (this.buffer.peek() != null && this.buffer.peek().getIsLast())) {
                     this.shouldIWork.set(false);
-                    System.out.println(TAG + " that more than "+TRY+" time so I kill the server ");
+
                     break;
                 }
 
@@ -80,7 +81,7 @@ public class HandlerReceiver extends Thread implements Runnable{
             }
 
             try {
-                Thread.sleep(1000);
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -126,7 +127,7 @@ public class HandlerReceiver extends Thread implements Runnable{
 
         // wait to have a free port
         try {
-            Thread.sleep(500);
+            Thread.sleep(200);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

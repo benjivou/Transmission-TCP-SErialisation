@@ -23,7 +23,7 @@ public class HandlerReceiver extends Thread implements Runnable{
 
     private ConcurrentLinkedQueue<Message> buffer;
     private long lastCreation;
-    private AtomicInteger lastElementsSeen;
+    private AtomicInteger lastElementsSeen; // the position of the last eleemnt seen
     private int numTry;
     private AtomicBoolean shouldIWork; // true if the handler work, false to kill the handler
     private Thread th;
@@ -38,7 +38,7 @@ public class HandlerReceiver extends Thread implements Runnable{
         this.numTry = 0;
         this.lastElementsSeen = new AtomicInteger(0);
         this.shouldIWork = new AtomicBoolean(true);
-        this.th =new Thread(new TCPServerLMessageAlwaysOn(this.buffer));
+        this.th = new Thread(new TCPServerLMessageAlwaysOn(this.buffer));
         this.messageRemove = new AtomicBoolean(false);
         th.start();
 
@@ -51,15 +51,13 @@ public class HandlerReceiver extends Thread implements Runnable{
             // When u receive something
 
             // if the thread is kill
-            if (System.currentTimeMillis()-this.lastCreation > WAIT ||
-                    (this.buffer.peek() != null && this.buffer.peek().getIsLast())){
+            if (System.currentTimeMillis()-this.lastCreation > WAIT ){
                 System.out.println(TAG + "U make me wait too long");
                 this.numTry ++;
 
                 // if we try more than 3 times we break the handler
-                if (numTry >TRY ||  (this.buffer.peek() != null && this.buffer.peek().getIsLast())) {
+                if (numTry >TRY ) {
                     this.shouldIWork.set(false);
-
                     break;
                 }
 
@@ -67,21 +65,29 @@ public class HandlerReceiver extends Thread implements Runnable{
                 this.lastCreation = System.currentTimeMillis();
 
             }
-            if (this.lastElementsSeen.get() > this.buffer.size() || (this.messageRemove.get() && this.lastElementsSeen.get() == this.buffer.size())){
 
+            // end message
+            if ((this.buffer.peek() != null && this.buffer.peek().getIsLast())){
+                this.shouldIWork.set(false);
+                break;
+            }
+
+            if (this.lastElementsSeen.get() > this.buffer.size() ||
+                    (this.messageRemove.get() && this.lastElementsSeen.get() < this.buffer.size())){
+                this.messageRemove.set(false);
                 this.lastElementsSeen.addAndGet(this.buffer.size());
                 System.out.println(TAG + this.toString());
                 // re-open the connexion
 
                 reStartServer();
-                this.lastCreation = System.currentTimeMillis();
+
                 this.numTry = 0 ;
 
 
             }
 
             try {
-                Thread.sleep(500);
+                Thread.sleep(50);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -108,6 +114,7 @@ public class HandlerReceiver extends Thread implements Runnable{
         }
 
         Message msg = this.buffer.poll();
+        System.out.println(TAG + " getMessage : " + "the buffer length is now :" + this.buffer.size());
         return msg;
     }
 
@@ -127,11 +134,15 @@ public class HandlerReceiver extends Thread implements Runnable{
 
         // wait to have a free port
         try {
-            Thread.sleep(200);
+            Thread.sleep(50);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         this.th = new Thread(new TCPServerLMessageAlwaysOn(buffer));
         this.th.start();
+        this.lastCreation = System.currentTimeMillis();
+    }
+    public int getSizeBuffer(){
+        return this.buffer.size();
     }
 }

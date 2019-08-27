@@ -88,7 +88,7 @@ public class FrameInput extends JFrame implements ActionListener {
 		if (strBtName.equals("End")){
 			System.out.println("U press End");
 			msg = new Message("kill app");
-
+			dispose();                  // kill JFrame
 		}
 
 		// JSONization

@@ -11,6 +11,7 @@ public class Test_UiInput {
 
         FrameOutputMessage fmo  = new FrameOutputMessage();
         FileManager fm = new FileManager("./tutu.txt");
+        new Thread(fmo).start();
 	    FrameInput fi = new FrameInput(fm);
 	}
 }

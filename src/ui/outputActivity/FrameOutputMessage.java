@@ -66,30 +66,32 @@ public class FrameOutputMessage extends JFrame implements Runnable{
             /**
              * Step 1: Check if we have some messages
              */
-             msg = this.handler.getMessage();
+            if (this.handler.getSizeBuffer() > 0){
+                 msg = this.handler.getMessage();
 
-            /**
-             * Step 2 : if there is something to do
-             */
-            if (msg != null){
+                /**
+                 * Step 2 : if there is something to do
+                 */
+                if (msg != null) {
+                    on = msg.getIsLast();
+                    // final state
+                    if (on) {
+                        System.out.println(TAG + " I kill the output frame");
+                        this.handler.killHandler(); // kill handler
+                        dispose();                  // kill JFrame
 
-                // final state
-                if (msg.getIsLast()){
-                    System.out.println(TAG + " I kill the output frame");
-
-                    this.textArea.setText("this is the end");
-                    this.mainPanel.revalidate();
-                    this.mainPanel.repaint();
-                    this.handler.killHandler(); // kill handler
-                    dispose();       // kill JFrame
-                    on = true;
-                }else
-                {
-                    System.out.println(TAG + " I read this ");
-                    this.textArea.setText(msg.getContent());
-                    this.mainPanel.revalidate();
-                    this.mainPanel.repaint();
+                    } else {
+                        System.out.println(TAG + " I read this ");
+                        this.textArea.setText(msg.getContent());
+                        this.mainPanel.revalidate();
+                        this.mainPanel.repaint();
+                    }
                 }
+            }
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }

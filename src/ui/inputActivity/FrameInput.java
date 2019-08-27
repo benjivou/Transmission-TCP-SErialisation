@@ -17,6 +17,8 @@ import serialize.FileManager;
 
 public class FrameInput extends JFrame implements ActionListener {
 
+	public static final String TAG = "Frameinput :";
+
 	// Serializer
 	final GsonBuilder builder = new GsonBuilder();
 	final Gson gson = builder.create();
@@ -92,7 +94,7 @@ public class FrameInput extends JFrame implements ActionListener {
 		// JSONization
 		msgToSend = gson.toJson(msg);
 
-
+		System.out.println(TAG + " the message U will send is : " + msgToSend);
 
 		// Store in a file
 		fm.add(msg);

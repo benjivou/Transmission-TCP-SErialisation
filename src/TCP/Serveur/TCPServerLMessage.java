@@ -19,7 +19,7 @@ public class TCPServerLMessage extends TCPServerBuilder implements Runnable{
 			s = ss.accept();
 			in = s.getInputStream();
 
-			String chaine  = readLMessage( in);
+			String chaine  = readLMessage(in);
 			System.out.println("Message :"+chaine);
 
 			s.close(); ss.close();

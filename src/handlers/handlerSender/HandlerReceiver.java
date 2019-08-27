@@ -1,12 +1,15 @@
 package handlers.handlerSender;
 
 import TCP.Serveur.TCPServerLMessageAlwaysOn;
-import com.sun.jdi.event.ThreadStartEvent;
+
 import model.Message;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static TCP.Base.TCPConst.TRY;
+import static TCP.Base.TCPConst.WAIT;
 
 /**
  * @brief the Goal of this handler is to control the serveur
@@ -24,6 +27,7 @@ public class HandlerReceiver extends Thread implements Runnable{
     private int numTry;
     private AtomicBoolean shouldIWork; // true if the handler work, false to kill the handler
     private Thread th;
+    private AtomicBoolean messageRemove;
     /**
      *
      *
@@ -34,7 +38,9 @@ public class HandlerReceiver extends Thread implements Runnable{
         this.numTry = 0;
         this.lastElementsSeen = new AtomicInteger(0);
         this.shouldIWork = new AtomicBoolean(true);
-        new Thread(new TCPServerLMessageAlwaysOn(this.buffer)).start();
+        this.th =new Thread(new TCPServerLMessageAlwaysOn(this.buffer));
+        this.messageRemove = new AtomicBoolean(false);
+        th.start();
 
         System.out.println(TAG + " The handler is set! ");
         this.start();
@@ -43,31 +49,41 @@ public class HandlerReceiver extends Thread implements Runnable{
     public void run() {
         while (this.shouldIWork.get()){
             // When u receive something
-            if (this.lastElementsSeen.get() != this.buffer.size()){
-                System.out.println(TAG + this.toString());
-                // re-open the connexion
-                new Thread(new TCPServerLMessageAlwaysOn(buffer)).start();
-                this.lastCreation = System.currentTimeMillis();
-                this.numTry = 0 ;
-            }
+
             // if the thread is kill
-            if (System.currentTimeMillis()-this.lastCreation > 2000){
+            if (System.currentTimeMillis()-this.lastCreation > WAIT){
                 System.out.println(TAG + "U make me wait too long");
                 this.numTry ++;
 
                 // if we try more than 3 times we break the handler
-                if (numTry >3) {
+                if (numTry >TRY) {
                     this.shouldIWork.set(false);
-                    System.out.println(TAG + " that more than 3 time so I kill the server ");
+                    System.out.println(TAG + " that more than "+TRY+" time so I kill the server ");
+                    break;
+                }
 
-                }
-                else {
-                    new Thread(new TCPServerLMessageAlwaysOn(buffer)).start();
-                    this.lastCreation = System.currentTimeMillis();
-                }
+                reStartServer();
+                this.lastCreation = System.currentTimeMillis();
+
+            }
+            if (this.lastElementsSeen.get() > this.buffer.size() || (this.messageRemove.get() && this.lastElementsSeen.get() == this.buffer.size())){
+
+                this.lastElementsSeen.addAndGet(this.buffer.size());
+                System.out.println(TAG + this.toString());
+                // re-open the connexion
+
+                reStartServer();
+                this.lastCreation = System.currentTimeMillis();
+                this.numTry = 0 ;
+
+
             }
 
-
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -87,6 +103,7 @@ public class HandlerReceiver extends Thread implements Runnable{
         // if there is none view messages
         if (this.buffer.size() > 0 ){
             this.lastElementsSeen.addAndGet(-1);
+            this.messageRemove.set(true);
         }
 
         Message msg = this.buffer.poll();
@@ -102,5 +119,18 @@ public class HandlerReceiver extends Thread implements Runnable{
                 ", numTry=" + numTry +
                 ", shouldIWork=" + shouldIWork.get() +
                 '}';
+    }
+
+    private void reStartServer(){
+        this.th.interrupt();
+
+        // wait to have a free port
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        this.th = new Thread(new TCPServerLMessageAlwaysOn(buffer));
+        this.th.start();
     }
 }

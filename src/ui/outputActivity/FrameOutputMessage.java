@@ -14,6 +14,7 @@ import java.awt.event.ActionListener;
 
 public class FrameOutputMessage extends JFrame implements Runnable{
 
+    private static final String  TAG = "FrameOutputMessage :";
     // Serializer
     final GsonBuilder builder = new GsonBuilder();
     final Gson gson = builder.create();
@@ -24,9 +25,10 @@ public class FrameOutputMessage extends JFrame implements Runnable{
     private JPanel mainPanel;
     private JLabel textArea;
 
-
-    // back attributes
+    // back attribute
     private HandlerReceiver handler;
+
+
     public FrameOutputMessage() {
         super();
 
@@ -59,8 +61,8 @@ public class FrameOutputMessage extends JFrame implements Runnable{
     @Override
     public void run() {
         Message msg;
-        boolean on=true;
-        while (on){
+        boolean on=false;
+        while (!on){
             /**
              * Step 1: Check if we have some messages
              */
@@ -73,10 +75,17 @@ public class FrameOutputMessage extends JFrame implements Runnable{
 
                 // final state
                 if (msg.getIsLast()){
+                    System.out.println(TAG + " I kill the output frame");
+
+                    this.textArea.setText("this is the end");
+                    this.mainPanel.revalidate();
+                    this.mainPanel.repaint();
                     this.handler.killHandler(); // kill handler
                     dispose();       // kill JFrame
+                    on = true;
                 }else
                 {
+                    System.out.println(TAG + " I read this ");
                     this.textArea.setText(msg.getContent());
                     this.mainPanel.revalidate();
                     this.mainPanel.repaint();

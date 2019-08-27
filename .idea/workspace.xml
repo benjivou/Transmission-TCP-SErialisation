@@ -20,7 +20,7 @@
   </component>
   <component name="ProjectId" id="1PqFCMOovLa18ZNV1VllpY9NP5S" />
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$USER_HOME$/Téléchargements/gson-2.6.2.jar!/" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../JAvaTCP" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.0" />
@@ -40,7 +40,7 @@
     </option>
   </component>
   <component name="RunManager" selected="Application.Test_UiInput">
-    <configuration name="Test_LMessage" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+    <configuration name="Test_LMessage" type="Application" factoryName="Application" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="test.Test_LMessage" />
       <module name="Transmission" />
       <extension name="coverage">
@@ -69,7 +69,6 @@
     <recent_temporary>
       <list>
         <item itemvalue="Application.Test_UiInput" />
-        <item itemvalue="Application.Test_LMessage" />
       </list>
     </recent_temporary>
   </component>

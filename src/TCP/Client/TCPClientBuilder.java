@@ -10,6 +10,8 @@ import TCP.Base.TCPFile;
 import TCP.Base.TCPInfo;
 import TCP.Base.TCPMessage;
 
+import static TCP.Base.TCPConst.PORT;
+
 
 public class TCPClientBuilder extends TCPFile {
 	Socket s;//Sockets
@@ -28,7 +30,7 @@ public class TCPClientBuilder extends TCPFile {
 
 	protected void setSocket() throws IOException {
 		//Set server address
-		isA = new InetSocketAddress("localhost",8080);
+		isA = new InetSocketAddress("localhost",PORT);
 		//Init socket
 		s = new Socket(isA.getHostName(), isA.getPort());
 		//init StreamBuffer

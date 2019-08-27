@@ -11,11 +11,10 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class TCPServerLMessageAlwaysOn extends TCPServerBuilder implements Runnable{
-
     // attribut
 
     ConcurrentLinkedQueue<Message> buffer; // the buffer to file when U receive a message
-
+    public static final String TAG = "TCPServerLMessageAlwaysOn :";
     public TCPServerLMessageAlwaysOn(ConcurrentLinkedQueue<Message> buffer) {
         super();
         this.buffer = buffer;
@@ -24,45 +23,52 @@ public class TCPServerLMessageAlwaysOn extends TCPServerBuilder implements Runna
     @Override
     public void run() {
         try {
+
             Message msg = null;
             GsonBuilder gsonBuilder = new GsonBuilder();
             Gson gson = new Gson();
             Type msgType = new TypeToken<Message>(){}.getType();
 
-            /*
+            while(true){
+                /*
             Step 1 : Open the connexion
              */
-            System.out.println("TCPServerLMessage launched ...");
-            setSocket();
-            ss.setSoTimeout(3000); // this close the connection if nobody is connected
-
+                System.out.println(TAG + " TCPServerLMessage launched ...");
+                setSocket();
+                ss.setSoTimeout(2000); // this close the connection if nobody is connected
+                System.out.println(TAG + " wait connexion");
             /*
             Step 2 : Accept connexion & and get the message
              */
-            s = ss.accept();
-            in = s.getInputStream();
-            String chaine  = readLMessage(in);
-
+                s = ss.accept();
+                in = s.getInputStream();
+                String chaine  = readLMessage(in);
+                System.out.println(TAG + " Read the message received ; " + chaine);
             /*
             Step 3 : Deserialize
              */
-            msg = gson.fromJson(chaine, msgType);
+                msg = gson.fromJson(chaine, msgType);
 
             /*
             Step 4 : Add the msg to the Queue
              */
-            this.buffer.add(msg);
-
+                this.buffer.add(msg);
+                System.out.println(TAG + " Message received and store");
             /*
             Step 5 : Close the connexion
              */
-            s.close(); ss.close();
-            System.out.println("Server close ");
+                s.close(); ss.close();
+                System.out.println("Server close ");
+            }
+
         }
         catch(IOException e)
         {
-            System.out.println("IOException TCPServerLMessage");
+
+
+            System.out.println(e);
 
         }
+
     }
 }

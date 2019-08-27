@@ -1,6 +1,7 @@
 package handlers.handlerSender;
 
 import TCP.Serveur.TCPServerLMessageAlwaysOn;
+import com.sun.jdi.event.ThreadStartEvent;
 import model.Message;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -22,10 +23,10 @@ public class HandlerReceiver extends Thread implements Runnable{
     private AtomicInteger lastElementsSeen;
     private int numTry;
     private AtomicBoolean shouldIWork; // true if the handler work, false to kill the handler
-
+    private Thread th;
     /**
      *
-     * @param buffer The buffer to share data received by the server
+     *
      */
     public HandlerReceiver(){
         this.buffer = new ConcurrentLinkedQueue<Message>();
@@ -33,7 +34,10 @@ public class HandlerReceiver extends Thread implements Runnable{
         this.numTry = 0;
         this.lastElementsSeen = new AtomicInteger(0);
         this.shouldIWork = new AtomicBoolean(true);
-        new Thread(new TCPServerLMessageAlwaysOn(buffer)).start();
+        new Thread(new TCPServerLMessageAlwaysOn(this.buffer)).start();
+
+        System.out.println(TAG + " The handler is set! ");
+        this.start();
     }
     @Override
     public void run() {
@@ -47,14 +51,20 @@ public class HandlerReceiver extends Thread implements Runnable{
                 this.numTry = 0 ;
             }
             // if the thread is kill
-            if (System.currentTimeMillis()-this.lastCreation > 3000){
+            if (System.currentTimeMillis()-this.lastCreation > 2000){
+                System.out.println(TAG + "U make me wait too long");
                 this.numTry ++;
 
                 // if we try more than 3 times we break the handler
-                if (numTry >3)
+                if (numTry >3) {
                     this.shouldIWork.set(false);
-                else
+                    System.out.println(TAG + " that more than 3 time so I kill the server ");
+
+                }
+                else {
                     new Thread(new TCPServerLMessageAlwaysOn(buffer)).start();
+                    this.lastCreation = System.currentTimeMillis();
+                }
             }
 
 

@@ -9,6 +9,8 @@ import java.net.Socket;
 
 import TCP.Base.*;
 
+import static TCP.Base.TCPConst.PORT;
+
 class TCPServerBuilder extends TCPFile {
     Socket s; //Socket received by client
     InetSocketAddress isA; // Address + port
@@ -27,7 +29,7 @@ class TCPServerBuilder extends TCPFile {
 
     protected void setSocket() throws IOException {
         //Set address
-        isA = new InetSocketAddress("localhost",8080);
+        isA = new InetSocketAddress("localhost",PORT);
         //Set serverSocket
         ss = new ServerSocket(isA.getPort());
         //Set buffer

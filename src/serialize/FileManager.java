@@ -170,7 +170,11 @@ public class FileManager {
          */
 
             this.mutex.set(false);
-            return list = gson.fromJson(content, messageListType);
+            System.out.println(TAG+ "in the file : " + content);
+            list = gson.fromJson(content, messageListType);
+            int size = (list == null )? 0:list.size();
+            System.out.println(TAG +" The list size is " + size);
+            return list ;
         } catch (FileNotFoundException e) {
             System.out.println("File U search was " + yourFile.toString());
             e.printStackTrace();
@@ -181,6 +185,9 @@ public class FileManager {
 
     }
 
+    public int getNumbElements() {
+        return numbElements.get();
+    }
 }
 
 

@@ -2,6 +2,7 @@ package test;
 
 import serialize.FileManager;
 import ui.inputActivity.FrameInput;
+import ui.outputActivity.FrameOutTable;
 import ui.outputActivity.FrameOutputMessage;
 
 import java.io.IOException;
@@ -13,5 +14,6 @@ public class Test_UiInput {
         FileManager fm = new FileManager("./tutu.txt");
         new Thread(fmo).start();
 	    FrameInput fi = new FrameInput(fm);
+		FrameOutTable ft = new FrameOutTable(fm);
 	}
 }

@@ -71,7 +71,8 @@ public class FrameInput extends JFrame implements ActionListener {
 
 		String strBtName = arg0.getActionCommand(), msgToSend;
 		Message msg = null;
-
+		this.btSend.setEnabled(false);
+		this.btEnd.setEnabled(false);
 
 		// onClick of btSend
 		if (strBtName.equals("Send")){
@@ -101,7 +102,13 @@ public class FrameInput extends JFrame implements ActionListener {
 
 		// Send it to the cloud
 		new Thread(new TCPClientLMessage(msgToSend)).start();
-		
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		this.btSend.setEnabled(true);
+		this.btEnd.setEnabled(true);
 	}
 
 }

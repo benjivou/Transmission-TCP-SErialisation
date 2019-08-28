@@ -68,6 +68,8 @@ public class FrameOutTable extends JFrame implements Runnable {
 
         this.lastVersion = fm.getNumbElements();
 
+        this.outTable.setAutoCreateRowSorter(true);// enable sorting
+
         new Thread(this).start();
 
     }

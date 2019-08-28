@@ -8,7 +8,7 @@ import java.util.List;
 public class MessageTableDynamique extends AbstractTableModel {
     private final List<Message> messages = new ArrayList<Message>();
 
-    private final String[] entetes = {"IsLast", "Content"};
+    private final String[] entetes = {"IsLast", "Content","Timestamp"};
 
     public MessageTableDynamique(ArrayList<Message> list) {
         super();
@@ -37,7 +37,8 @@ public class MessageTableDynamique extends AbstractTableModel {
                 return messages.get(rowIndex).getIsLast();
             case 1:
                 return messages.get(rowIndex).getContent();
-
+            case 2:
+                return messages.get(rowIndex).getTimestamp();
             default:
                 return null; //Ne devrait jamais arriver
         }
